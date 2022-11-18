@@ -1,35 +1,26 @@
 terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "4.28"
-    }
-    hcp = {
-      source = "hashicorp/hcp"
-    }
-    azure = {
-      source = "hashicorp/azure"
-    }
-  }
-
   cloud {
-    organization = "[ORG]"
+    organization = "brightblueray"
+
     workspaces {
-      name = "[WORKSPACE NAME]"
+      name = "idealco-compute-prod"
     }
   }
 }
 
-provider "hcp" {}
+provider "azurerm" {
+  features {}
+}
 
-provider "aws" {
-  region = var.region
-  default_tags {
-    tags = {
-      Terraform   = "true"
-      Environment = "dev"
-      Purpose     = ""
-      Owner       = "rryjewski"
-    }
-  }
+data "tfe_outputs" "landingzone" {
+  organization = "brightblueray"
+  workspace = "idealco-landingzone-prod"
+}
+
+module "idealco_compute" {
+  source  = "app.terraform.io/brightblueray/idealco_compute/azure"
+  version = "1.0.0"
+  # insert required variables here
+  rg = data.tfe_outputs.landingzone.values.rg-name
+  subnet_id = data.tfe_outputs.landingzone.values.subnet-id
 }
