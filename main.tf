@@ -3,7 +3,7 @@ terraform {
     organization = "brightblueray"
 
     workspaces {
-      name = "idealco-compute-prod"
+      name = "idealco-compute-dev"
     }
   }
 }
@@ -14,7 +14,7 @@ provider "azurerm" {
 
 data "tfe_outputs" "landingzone" {
   organization = "brightblueray"
-  workspace = "idealco-landingzone-prod"
+  workspace = "idealco-landingzone-dev"
 }
 
 module "idealco_compute" {
